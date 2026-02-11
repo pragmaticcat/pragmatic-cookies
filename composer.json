@@ -1,0 +1,34 @@
+{
+  "name": "pragmatic/pragmatic-cookies",
+  "description": "Pragmatic Cookies plugin for Craft CMS",
+  "type": "craft-plugin",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.2",
+    "craftcms/cms": "^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "pragmatic\\cookies\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Oriol Noya",
+      "email": "oriolnoya@pragmatic.cat"
+    }
+  ],
+  "support": {
+    "email": "oriolnoya@pragmatic.cat"
+  },
+  "extra": {
+    "name": "Pragmatic Cookies",
+    "handle": "pragmatic-cookies",
+    "class": "pragmatic\\cookies\\PragmaticCookies",
+    "developer": "Pragmatic",
+    "developerUrl": "https://www.pragmatic.cat",
+    "documentationUrl": "https://github.com/pragmaticcat/pragmatic-cookies/blob/main/README.md",
+    "hasSettings": false,
+    "hasCpSection": true
+  }
+}

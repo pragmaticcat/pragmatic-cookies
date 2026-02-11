@@ -1,0 +1,12 @@
+{% extends parentLayout|default('_layouts/cp') %}
+
+{% set title = title ?? 'Cookies' %}
+{% set selectedSubnavItem = 'cookies' %}
+{% set selectedTab = craft.app.request.getSegment(2) %}
+
+{% set tabs = {
+  'general': { label: 'General', url: url('pragmatic-cookies/general') },
+  'options': { label: 'Opciones', url: url('pragmatic-cookies/options') }
+} %}
+
+{% block content %}{% endblock %}
