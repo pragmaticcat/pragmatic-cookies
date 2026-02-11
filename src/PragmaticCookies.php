@@ -5,6 +5,8 @@ namespace pragmatic\cookies;
 use craft\base\Plugin;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
+use craft\events\RegisterCpNavItemsEvent;
+use craft\web\twig\variables\Cp;
 use yii\base\Event;
 
 class PragmaticCookies extends Plugin
