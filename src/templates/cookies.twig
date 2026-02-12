@@ -38,10 +38,7 @@
               </td>
               <td>{{ cookie.provider }}</td>
               <td>
-                {% set cat = null %}
-                {% for c in categories if c.id == cookie.categoryId %}
-                  {% set cat = c %}
-                {% endfor %}
+                {% set cat = categories|filter(c => c.id == cookie.categoryId)|first %}
                 {{ cat ? cat.name : '—' }}
               </td>
               <td>{{ cookie.duration ?? '—' }}</td>

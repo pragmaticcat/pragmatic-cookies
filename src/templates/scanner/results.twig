@@ -43,10 +43,7 @@
               </td>
               <td>
                 {% if result.cookieId %}
-                  {% set linkedCookie = null %}
-                  {% for c in cookies if c.id == result.cookieId %}
-                    {% set linkedCookie = c %}
-                  {% endfor %}
+                  {% set linkedCookie = cookies|filter(c => c.id == result.cookieId)|first %}
                   {% if linkedCookie %}
                     <span class="status on"></span> {{ linkedCookie.name }}
                   {% else %}
