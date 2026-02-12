@@ -4,4 +4,63 @@
 {% set selectedTab = 'general' %}
 
 {% block content %}
+  <form method="post" accept-charset="UTF-8">
+    {{ csrfInput() }}
+    {{ actionInput('pragmatic-cookies/default/save-general') }}
+    {{ redirectInput('pragmatic-cookies/general') }}
+
+    {{ forms.textField({
+      label: 'Popup Title',
+      id: 'popupTitle',
+      name: 'popupTitle',
+      value: settings.popupTitle,
+      required: true,
+      instructions: 'The title displayed at the top of the cookie consent popup.'
+    }) }}
+
+    {{ forms.textareaField({
+      label: 'Popup Description',
+      id: 'popupDescription',
+      name: 'popupDescription',
+      value: settings.popupDescription,
+      rows: 3,
+      instructions: 'The description text shown in the cookie consent popup.'
+    }) }}
+
+    {{ forms.textField({
+      label: 'Accept All Button Label',
+      id: 'acceptAllLabel',
+      name: 'acceptAllLabel',
+      value: settings.acceptAllLabel,
+      required: true,
+    }) }}
+
+    {{ forms.textField({
+      label: 'Reject All Button Label',
+      id: 'rejectAllLabel',
+      name: 'rejectAllLabel',
+      value: settings.rejectAllLabel,
+      required: true,
+    }) }}
+
+    {{ forms.textField({
+      label: 'Save Preferences Button Label',
+      id: 'savePreferencesLabel',
+      name: 'savePreferencesLabel',
+      value: settings.savePreferencesLabel,
+      required: true,
+    }) }}
+
+    {{ forms.textField({
+      label: 'Cookie Policy URL',
+      id: 'cookiePolicyUrl',
+      name: 'cookiePolicyUrl',
+      value: settings.cookiePolicyUrl,
+      instructions: 'Link to your cookie/privacy policy page. Leave empty to hide the link.'
+    }) }}
+
+    <div class="btngroup">
+      <button type="submit" class="btn submit">Save</button>
+    </div>
+  </form>
 {% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'pragmatic-cookies/_layout' %}
+
+{% set selectedTab = 'categories' %}
+
+{% block content %}
+  <form method="post" accept-charset="UTF-8">
+    {{ csrfInput() }}
+    {{ actionInput('pragmatic-cookies/default/save-category') }}
+    {{ redirectInput('pragmatic-cookies/categories') }}
+
+    {% if category.id %}
+      {{ hiddenInput('categoryId', category.id) }}
+    {% endif %}
+
+    {{ forms.textField({
+      label: 'Name',
+      id: 'name',
+      name: 'name',
+      value: category.name,
+      required: true,
+      first: true,
+      errors: category.getErrors('name'),
+    }) }}
+
+    {{ forms.textField({
+      label: 'Handle',
+      id: 'handle',
+      name: 'handle',
+      value: category.handle,
+      required: true,
+      instructions: 'Used in code references (e.g. "analytics", "marketing").',
+      errors: category.getErrors('handle'),
+    }) }}
+
+    {{ forms.textareaField({
+      label: 'Description',
+      id: 'description',
+      name: 'description',
+      value: category.description,
+      rows: 3,
+      instructions: 'Shown to visitors in the consent popup.',
+    }) }}
+
+    {{ forms.lightswitchField({
+      label: 'Required',
+      id: 'isRequired',
+      name: 'isRequired',
+      on: category.isRequired,
+      instructions: 'Required categories cannot be disabled by visitors.',
+    }) }}
+
+    <div class="btngroup">
+      <button type="submit" class="btn submit">Save</button>
+    </div>
+  </form>
+
+  {% if not category.id %}
+    {% js %}
+      new Craft.HandleGenerator('#name', '#handle');
+    {% endjs %}
+  {% endif %}
+{% endblock %}

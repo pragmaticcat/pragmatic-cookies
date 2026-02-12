@@ -1,0 +1,70 @@
+{% extends 'pragmatic-cookies/_layout' %}
+
+{% set title = 'Scanner' %}
+{% set selectedTab = 'scanner' %}
+
+{% do view.registerAssetBundle('pragmatic\\cookies\\assets\\CpAsset') %}
+
+{% block content %}
+  <div class="toolbar">
+    <form method="post">
+      {{ csrfInput() }}
+      {{ actionInput('pragmatic-cookies/scan/start') }}
+      <button type="submit" class="btn submit">Start Scan</button>
+    </form>
+  </div>
+
+  <div class="readable">
+    <p>The scanner crawls your site pages using HTTP requests and detects cookies set via <code>Set-Cookie</code> headers. JavaScript-based cookies (e.g. <code>_ga</code>) are not detected and should be added manually.</p>
+  </div>
+
+  {% if scans|length %}
+    <div class="tableview">
+      <table class="data fullwidth">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Pages</th>
+            <th>Cookies Found</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for scan in scans %}
+            <tr data-scan-id="{{ scan.id }}">
+              <td>{{ scan.dateCreated|date('Y-m-d H:i') }}</td>
+              <td>
+                <span class="scan-status" data-scan-id="{{ scan.id }}">
+                  {% if scan.status == 'completed' %}
+                    <span class="status on"></span> Completed
+                  {% elseif scan.status == 'running' %}
+                    <span class="status"></span> Running
+                    <span class="scan-progress">({{ scan.pagesScanned }}/{{ scan.totalPages }})</span>
+                  {% elseif scan.status == 'pending' %}
+                    <span class="status"></span> Pending
+                  {% elseif scan.status == 'failed' %}
+                    <span class="status off"></span> Failed
+                  {% endif %}
+                </span>
+              </td>
+              <td>
+                <span class="scan-pages">{{ scan.pagesScanned }}</span> / {{ scan.totalPages }}
+              </td>
+              <td>
+                <span class="scan-cookies">{{ scan.cookiesFound }}</span>
+              </td>
+              <td>
+                {% if scan.status == 'completed' %}
+                  <a href="{{ url('pragmatic-cookies/scanner/results/' ~ scan.id) }}" class="btn small">View Results</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No scans yet. Click "Start Scan" to discover cookies on your site.</p>
+  {% endif %}
+{% endblock %}

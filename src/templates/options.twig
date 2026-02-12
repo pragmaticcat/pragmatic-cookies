@@ -1,7 +1,104 @@
 {% extends 'pragmatic-cookies/_layout' %}
 
-{% set title = 'Opciones' %}
+{% set title = 'Appearance' %}
 {% set selectedTab = 'options' %}
 
 {% block content %}
+  <form method="post" accept-charset="UTF-8">
+    {{ csrfInput() }}
+    {{ actionInput('pragmatic-cookies/default/save-options') }}
+    {{ redirectInput('pragmatic-cookies/options') }}
+
+    <h2>Layout</h2>
+
+    {{ forms.selectField({
+      label: 'Popup Layout',
+      id: 'popupLayout',
+      name: 'popupLayout',
+      value: settings.popupLayout,
+      options: [
+        { label: 'Bar', value: 'bar' },
+        { label: 'Box', value: 'box' },
+        { label: 'Modal', value: 'modal' },
+      ],
+      instructions: 'Choose how the consent popup is displayed.'
+    }) }}
+
+    {{ forms.selectField({
+      label: 'Popup Position',
+      id: 'popupPosition',
+      name: 'popupPosition',
+      value: settings.popupPosition,
+      options: [
+        { label: 'Bottom', value: 'bottom' },
+        { label: 'Top', value: 'top' },
+        { label: 'Center', value: 'center' },
+      ],
+    }) }}
+
+    <hr>
+    <h2>Colors</h2>
+
+    {{ forms.colorField({
+      label: 'Primary Color',
+      id: 'primaryColor',
+      name: 'primaryColor',
+      value: settings.primaryColor,
+      instructions: 'Used for buttons and active toggles.'
+    }) }}
+
+    {{ forms.colorField({
+      label: 'Background Color',
+      id: 'backgroundColor',
+      name: 'backgroundColor',
+      value: settings.backgroundColor,
+    }) }}
+
+    {{ forms.colorField({
+      label: 'Text Color',
+      id: 'textColor',
+      name: 'textColor',
+      value: settings.textColor,
+    }) }}
+
+    <hr>
+    <h2>Behaviour</h2>
+
+    {{ forms.lightswitchField({
+      label: 'Show Overlay',
+      id: 'overlayEnabled',
+      name: 'overlayEnabled',
+      on: settings.overlayEnabled == 'true',
+      instructions: 'Show a semi-transparent overlay behind the popup.'
+    }) }}
+
+    {{ forms.lightswitchField({
+      label: 'Auto Show Popup',
+      id: 'autoShowPopup',
+      name: 'autoShowPopup',
+      on: settings.autoShowPopup == 'true',
+      instructions: 'Automatically display the popup on first visit.'
+    }) }}
+
+    {{ forms.textField({
+      label: 'Consent Expiry (days)',
+      id: 'consentExpiry',
+      name: 'consentExpiry',
+      value: settings.consentExpiry,
+      type: 'number',
+      instructions: 'Number of days before the consent cookie expires and the popup is shown again.'
+    }) }}
+
+    {{ forms.lightswitchField({
+      label: 'Log Consent',
+      id: 'logConsent',
+      name: 'logConsent',
+      on: settings.logConsent == 'true',
+      instructions: 'Store consent records in the database for compliance purposes.'
+    }) }}
+
+    <div class="btngroup">
+      <button type="submit" class="btn submit">Save</button>
+    </div>
+  </form>
 {% endblock %}

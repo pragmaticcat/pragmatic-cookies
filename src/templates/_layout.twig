@@ -2,11 +2,14 @@
 
 {% set title = title ?? 'Cookies' %}
 {% set selectedSubnavItem = 'cookies' %}
-{% set selectedTab = craft.app.request.getSegment(2) %}
+{% set selectedTab = craft.app.request.getSegment(2) ?? 'general' %}
 
 {% set tabs = {
   'general': { label: 'General', url: url('pragmatic-cookies/general') },
-  'options': { label: 'Opciones', url: url('pragmatic-cookies/options') }
+  'categories': { label: 'Categories', url: url('pragmatic-cookies/categories') },
+  'cookies': { label: 'Cookies', url: url('pragmatic-cookies/cookies') },
+  'scanner': { label: 'Scanner', url: url('pragmatic-cookies/scanner') },
+  'options': { label: 'Appearance', url: url('pragmatic-cookies/options') }
 } %}
 
 {% block content %}{% endblock %}

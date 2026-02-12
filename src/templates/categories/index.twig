@@ -1,0 +1,64 @@
+{% extends 'pragmatic-cookies/_layout' %}
+
+{% set title = 'Categories' %}
+{% set selectedTab = 'categories' %}
+
+{% block content %}
+  <div class="toolbar">
+    <a href="{{ url('pragmatic-cookies/categories/new') }}" class="btn submit add icon">New Category</a>
+  </div>
+
+  {% if categories|length %}
+    <div class="tableview">
+      <table class="data fullwidth">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Handle</th>
+            <th>Required</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="categories-table">
+          {% for category in categories %}
+            <tr data-id="{{ category.id }}">
+              <td>
+                <a href="{{ url('pragmatic-cookies/categories/' ~ category.id) }}">
+                  {{ category.name }}
+                </a>
+              </td>
+              <td><code>{{ category.handle }}</code></td>
+              <td>
+                {% if category.isRequired %}
+                  <span class="status on"></span> Yes
+                {% else %}
+                  <span class="status"></span> No
+                {% endif %}
+              </td>
+              <td class="thin">
+                <a class="delete icon" title="Delete" role="button" data-category-id="{{ category.id }}"></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No categories yet.</p>
+  {% endif %}
+
+  {% js %}
+    document.querySelectorAll('.delete.icon[data-category-id]').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!confirm('Are you sure you want to delete this category?')) return;
+        var id = this.dataset.categoryId;
+        Craft.sendActionRequest('POST', 'pragmatic-cookies/default/delete-category', {
+          data: { id: id }
+        }).then(function() {
+          location.reload();
+        });
+      });
+    });
+  {% endjs %}
+{% endblock %}

@@ -1,0 +1,54 @@
+<div class="pragmatic-cookies-table">
+  {% for group in grouped %}
+    {% set category = group.category %}
+    {% set cookies = group.cookies %}
+
+    {% if cookies|length %}
+      <div class="pragmatic-cookies-table__group">
+        <h3 class="pragmatic-cookies-table__category-name">
+          {{ category ? category.name : 'Uncategorized' }}
+          {% if category and category.isRequired %}
+            <span class="pragmatic-cookies-table__required">(Required)</span>
+          {% endif %}
+        </h3>
+        {% if category and category.description %}
+          <p class="pragmatic-cookies-table__category-desc">{{ category.description }}</p>
+        {% endif %}
+
+        <table class="pragmatic-cookies-table__table">
+          <thead>
+            <tr>
+              <th>Cookie</th>
+              <th>Provider</th>
+              <th>Description</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cookie in cookies %}
+              <tr>
+                <td><code>{{ cookie.name }}</code></td>
+                <td>{{ cookie.provider ?? '—' }}</td>
+                <td>{{ cookie.description ?? '—' }}</td>
+                <td>{{ cookie.duration ?? '—' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<style>
+  .pragmatic-cookies-table { max-width: 100%; }
+  .pragmatic-cookies-table__group { margin-bottom: 2em; }
+  .pragmatic-cookies-table__category-name { font-size: 1.1em; font-weight: 700; margin: 0 0 0.25em; }
+  .pragmatic-cookies-table__required { font-size: 0.8em; font-weight: 400; opacity: 0.65; }
+  .pragmatic-cookies-table__category-desc { font-size: 0.9em; opacity: 0.75; margin: 0 0 1em; }
+  .pragmatic-cookies-table__table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+  .pragmatic-cookies-table__table th,
+  .pragmatic-cookies-table__table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+  .pragmatic-cookies-table__table th { font-weight: 600; background: #f9fafb; }
+  .pragmatic-cookies-table__table code { font-size: 0.85em; background: #f3f4f6; padding: 2px 6px; border-radius: 3px; }
+</style>

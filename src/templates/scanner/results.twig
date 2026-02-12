@@ -1,0 +1,93 @@
+{% extends 'pragmatic-cookies/_layout' %}
+
+{% set title = 'Scan Results' %}
+{% set selectedTab = 'scanner' %}
+
+{% block content %}
+  <div class="readable">
+    <p>
+      <strong>Status:</strong> {{ scan.status|capitalize }} &nbsp;|&nbsp;
+      <strong>Pages scanned:</strong> {{ scan.pagesScanned }} / {{ scan.totalPages }} &nbsp;|&nbsp;
+      <strong>Cookies found:</strong> {{ scan.cookiesFound }} &nbsp;|&nbsp;
+      <strong>Date:</strong> {{ scan.dateCreated|date('Y-m-d H:i') }}
+    </p>
+    {% if scan.errorMessage %}
+      <p class="error">{{ scan.errorMessage }}</p>
+    {% endif %}
+  </div>
+
+  {% if results|length %}
+    <div class="tableview">
+      <table class="data fullwidth">
+        <thead>
+          <tr>
+            <th>Cookie Name</th>
+            <th>Domain</th>
+            <th>Path</th>
+            <th>Found On</th>
+            <th>Linked Cookie</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for result in results %}
+            <tr>
+              <td><code>{{ result.cookieName }}</code></td>
+              <td>{{ result.cookieDomain ?? '—' }}</td>
+              <td>{{ result.cookiePath ?? '—' }}</td>
+              <td>
+                {% if result.pageUrl %}
+                  <a href="{{ result.pageUrl }}" target="_blank" rel="noopener">{{ result.pageUrl|length > 60 ? result.pageUrl[:60] ~ '…' : result.pageUrl }}</a>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td>
+                {% if result.cookieId %}
+                  {% set linkedCookie = null %}
+                  {% for c in cookies if c.id == result.cookieId %}
+                    {% set linkedCookie = c %}
+                  {% endfor %}
+                  {% if linkedCookie %}
+                    <span class="status on"></span> {{ linkedCookie.name }}
+                  {% else %}
+                    <span class="status on"></span> Linked
+                  {% endif %}
+                {% else %}
+                  <select class="link-cookie-select" data-result-id="{{ result.id }}">
+                    <option value="">— Link to cookie —</option>
+                    {% for c in cookies %}
+                      <option value="{{ c.id }}">{{ c.name }}</option>
+                    {% endfor %}
+                  </select>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No cookies were found during this scan.</p>
+  {% endif %}
+
+  <div class="toolbar" style="margin-top: 24px;">
+    <a href="{{ url('pragmatic-cookies/scanner') }}" class="btn">Back to Scanner</a>
+  </div>
+
+  {% js %}
+    document.querySelectorAll('.link-cookie-select').forEach(function(select) {
+      select.addEventListener('change', function() {
+        var cookieId = this.value;
+        var resultId = this.dataset.resultId;
+        if (!cookieId) return;
+        Craft.sendActionRequest('POST', 'pragmatic-cookies/scan/link-cookie', {
+          data: { resultId: resultId, cookieId: cookieId }
+        }).then(function() {
+          Craft.cp.displayNotice('Cookie linked.');
+        }).catch(function() {
+          Craft.cp.displayError('Could not link cookie.');
+        });
+      });
+    });
+  {% endjs %}
+{% endblock %}
