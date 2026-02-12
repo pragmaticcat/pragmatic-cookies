@@ -3,6 +3,7 @@
 namespace pragmatic\cookies\services;
 
 use Craft;
+use craft\web\View;
 use pragmatic\cookies\assets\ConsentAsset;
 use pragmatic\cookies\PragmaticCookies;
 use pragmatic\cookies\records\ConsentLogRecord;
@@ -37,20 +38,36 @@ class ConsentService extends Component
         $categories = PragmaticCookies::$plugin->categories->getAllCategories();
         $consent = $this->getCurrentConsent();
 
-        return Craft::$app->getView()->renderTemplate('pragmatic-cookies/frontend/_popup', [
+        $view = Craft::$app->getView();
+        $oldMode = $view->getTemplateMode();
+        $view->setTemplateMode(View::TEMPLATE_MODE_CP);
+
+        $html = $view->renderTemplate('pragmatic-cookies/frontend/_popup', [
             'settings' => $settings,
             'categories' => $categories,
             'consent' => $consent,
         ]);
+
+        $view->setTemplateMode($oldMode);
+
+        return $html;
     }
 
     public function renderCookieTable(): string
     {
         $grouped = PragmaticCookies::$plugin->cookies->getCookiesGroupedByCategory();
 
-        return Craft::$app->getView()->renderTemplate('pragmatic-cookies/frontend/_cookie-table', [
+        $view = Craft::$app->getView();
+        $oldMode = $view->getTemplateMode();
+        $view->setTemplateMode(View::TEMPLATE_MODE_CP);
+
+        $html = $view->renderTemplate('pragmatic-cookies/frontend/_cookie-table', [
             'grouped' => $grouped,
         ]);
+
+        $view->setTemplateMode($oldMode);
+
+        return $html;
     }
 
     public function hasConsent(string $categoryHandle): bool
