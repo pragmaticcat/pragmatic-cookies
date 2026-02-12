@@ -153,6 +153,11 @@ class PragmaticCookies extends Plugin
                     'label' => 'Cookies',
                     'url' => 'pragmatic-cookies/general',
                 ];
+
+                $path = Craft::$app->getRequest()->getPathInfo();
+                if ($path === 'pragmatic-cookies' || str_starts_with($path, 'pragmatic-cookies/')) {
+                    $event->navItems[$groupKey]['url'] = 'pragmatic-cookies';
+                }
             }
         );
     }
