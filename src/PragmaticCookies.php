@@ -151,7 +151,7 @@ class PragmaticCookies extends Plugin
 
                 $event->navItems[$groupKey]['subnav']['cookies'] = [
                     'label' => 'Cookies',
-                    'url' => 'pragmatic-cookies/general',
+                    'url' => 'pragmatic-cookies',
                 ];
 
                 $path = Craft::$app->getRequest()->getPathInfo();

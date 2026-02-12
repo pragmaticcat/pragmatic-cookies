@@ -1,8 +1,13 @@
 {% extends 'pragmatic-cookies/_layout' %}
 {% import "_includes/forms" as forms %}
 
-{% set title = 'Appearance' %}
+{% set title = 'Appearance'|t('pragmatic-cookies') %}
 {% set selectedTab = 'options' %}
+
+{% set crumbs = [
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
+  { label: 'Appearance'|t('pragmatic-cookies'), url: url('pragmatic-cookies/options') },
+] %}
 
 {% block content %}
   <form method="post" accept-charset="UTF-8">
@@ -10,96 +15,96 @@
     {{ actionInput('pragmatic-cookies/default/save-options') }}
     {{ redirectInput('pragmatic-cookies/options') }}
 
-    <h2>Layout</h2>
+    <h2>{{ 'Layout'|t('pragmatic-cookies') }}</h2>
 
     {{ forms.selectField({
-      label: 'Popup Layout',
+      label: 'Popup Layout'|t('pragmatic-cookies'),
       id: 'popupLayout',
       name: 'popupLayout',
       value: settings.popupLayout,
       options: [
-        { label: 'Bar', value: 'bar' },
-        { label: 'Box', value: 'box' },
-        { label: 'Modal', value: 'modal' },
+        { label: 'Bar'|t('pragmatic-cookies'), value: 'bar' },
+        { label: 'Box'|t('pragmatic-cookies'), value: 'box' },
+        { label: 'Modal'|t('pragmatic-cookies'), value: 'modal' },
       ],
-      instructions: 'Choose how the consent popup is displayed.'
+      instructions: 'Choose how the consent popup is displayed.'|t('pragmatic-cookies')
     }) }}
 
     {{ forms.selectField({
-      label: 'Popup Position',
+      label: 'Popup Position'|t('pragmatic-cookies'),
       id: 'popupPosition',
       name: 'popupPosition',
       value: settings.popupPosition,
       options: [
-        { label: 'Bottom', value: 'bottom' },
-        { label: 'Top', value: 'top' },
-        { label: 'Center', value: 'center' },
+        { label: 'Bottom'|t('pragmatic-cookies'), value: 'bottom' },
+        { label: 'Top'|t('pragmatic-cookies'), value: 'top' },
+        { label: 'Center'|t('pragmatic-cookies'), value: 'center' },
       ],
     }) }}
 
     <hr>
-    <h2>Colors</h2>
+    <h2>{{ 'Colors'|t('pragmatic-cookies') }}</h2>
 
     {{ forms.colorField({
-      label: 'Primary Color',
+      label: 'Primary Color'|t('pragmatic-cookies'),
       id: 'primaryColor',
       name: 'primaryColor',
       value: settings.primaryColor,
-      instructions: 'Used for buttons and active toggles.'
+      instructions: 'Used for buttons and active toggles.'|t('pragmatic-cookies')
     }) }}
 
     {{ forms.colorField({
-      label: 'Background Color',
+      label: 'Background Color'|t('pragmatic-cookies'),
       id: 'backgroundColor',
       name: 'backgroundColor',
       value: settings.backgroundColor,
     }) }}
 
     {{ forms.colorField({
-      label: 'Text Color',
+      label: 'Text Color'|t('pragmatic-cookies'),
       id: 'textColor',
       name: 'textColor',
       value: settings.textColor,
     }) }}
 
     <hr>
-    <h2>Behaviour</h2>
+    <h2>{{ 'Behaviour'|t('pragmatic-cookies') }}</h2>
 
     {{ forms.lightswitchField({
-      label: 'Show Overlay',
+      label: 'Show Overlay'|t('pragmatic-cookies'),
       id: 'overlayEnabled',
       name: 'overlayEnabled',
       on: settings.overlayEnabled == 'true',
-      instructions: 'Show a semi-transparent overlay behind the popup.'
+      instructions: 'Show a semi-transparent overlay behind the popup.'|t('pragmatic-cookies')
     }) }}
 
     {{ forms.lightswitchField({
-      label: 'Auto Show Popup',
+      label: 'Auto Show Popup'|t('pragmatic-cookies'),
       id: 'autoShowPopup',
       name: 'autoShowPopup',
       on: settings.autoShowPopup == 'true',
-      instructions: 'Automatically display the popup on first visit.'
+      instructions: 'Automatically display the popup on first visit.'|t('pragmatic-cookies')
     }) }}
 
     {{ forms.textField({
-      label: 'Consent Expiry (days)',
+      label: 'Consent Expiry (days)'|t('pragmatic-cookies'),
       id: 'consentExpiry',
       name: 'consentExpiry',
       value: settings.consentExpiry,
       type: 'number',
-      instructions: 'Number of days before the consent cookie expires and the popup is shown again.'
+      instructions: 'Number of days before the consent cookie expires and the popup is shown again.'|t('pragmatic-cookies')
     }) }}
 
     {{ forms.lightswitchField({
-      label: 'Log Consent',
+      label: 'Log Consent'|t('pragmatic-cookies'),
       id: 'logConsent',
       name: 'logConsent',
       on: settings.logConsent == 'true',
-      instructions: 'Store consent records in the database for compliance purposes.'
+      instructions: 'Store consent records in the database for compliance purposes.'|t('pragmatic-cookies')
     }) }}
 
     <div class="btngroup">
-      <button type="submit" class="btn submit">Save</button>
+      <button type="submit" class="btn submit">{{ 'Save'|t('pragmatic-cookies') }}</button>
     </div>
   </form>
 {% endblock %}

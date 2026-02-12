@@ -1,15 +1,15 @@
 {% extends parentLayout|default('_layouts/cp') %}
 
-{% set title = title ?? 'Cookies' %}
+{% set title = title ?? 'Cookies'|t('pragmatic-cookies') %}
 {% set selectedSubnavItem = 'cookies' %}
 {% set selectedTab = craft.app.request.getSegment(2) ?? 'general' %}
 
 {% set tabs = {
-  'general': { label: 'General', url: url('pragmatic-cookies/general') },
-  'categories': { label: 'Categories', url: url('pragmatic-cookies/categories') },
-  'cookies': { label: 'Cookies', url: url('pragmatic-cookies/cookies') },
-  'scanner': { label: 'Scanner', url: url('pragmatic-cookies/scanner') },
-  'options': { label: 'Appearance', url: url('pragmatic-cookies/options') }
+  'general': { label: 'General'|t('pragmatic-cookies'), url: url('pragmatic-cookies/general') },
+  'categories': { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories') },
+  'cookies': { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies/cookies') },
+  'scanner': { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner') },
+  'options': { label: 'Appearance'|t('pragmatic-cookies'), url: url('pragmatic-cookies/options') }
 } %}
 
 {% block content %}{% endblock %}

@@ -1,15 +1,21 @@
 {% extends 'pragmatic-cookies/_layout' %}
 
-{% set title = 'Scan Results' %}
+{% set title = 'Scan Results'|t('pragmatic-cookies') %}
 {% set selectedTab = 'scanner' %}
+
+{% set crumbs = [
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
+  { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner') },
+  { label: 'Scan Results'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner/results/' ~ scan.id) },
+] %}
 
 {% block content %}
   <div class="readable">
     <p>
-      <strong>Status:</strong> {{ scan.status|capitalize }} &nbsp;|&nbsp;
-      <strong>Pages scanned:</strong> {{ scan.pagesScanned }} / {{ scan.totalPages }} &nbsp;|&nbsp;
-      <strong>Cookies found:</strong> {{ scan.cookiesFound }} &nbsp;|&nbsp;
-      <strong>Date:</strong> {{ scan.dateCreated|date('Y-m-d H:i') }}
+      <strong>{{ 'Status:'|t('pragmatic-cookies') }}</strong> {{ scan.status|capitalize }} &nbsp;|&nbsp;
+      <strong>{{ 'Pages scanned:'|t('pragmatic-cookies') }}</strong> {{ scan.pagesScanned }} / {{ scan.totalPages }} &nbsp;|&nbsp;
+      <strong>{{ 'Cookies found:'|t('pragmatic-cookies') }}</strong> {{ scan.cookiesFound }} &nbsp;|&nbsp;
+      <strong>{{ 'Date:'|t('pragmatic-cookies') }}</strong> {{ scan.dateCreated|date('Y-m-d H:i') }}
     </p>
     {% if scan.errorMessage %}
       <p class="error">{{ scan.errorMessage }}</p>
@@ -21,11 +27,11 @@
       <table class="data fullwidth">
         <thead>
           <tr>
-            <th>Cookie Name</th>
-            <th>Domain</th>
-            <th>Path</th>
-            <th>Found On</th>
-            <th>Linked Cookie</th>
+            <th>{{ 'Cookie Name'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Domain'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Path'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Found On'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Linked Cookie'|t('pragmatic-cookies') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -47,11 +53,11 @@
                   {% if linkedCookie %}
                     <span class="status on"></span> {{ linkedCookie.name }}
                   {% else %}
-                    <span class="status on"></span> Linked
+                    <span class="status on"></span> {{ 'Linked'|t('pragmatic-cookies') }}
                   {% endif %}
                 {% else %}
                   <select class="link-cookie-select" data-result-id="{{ result.id }}">
-                    <option value="">— Link to cookie —</option>
+                    <option value="">{{ '— Link to cookie —'|t('pragmatic-cookies') }}</option>
                     {% for c in cookies %}
                       <option value="{{ c.id }}">{{ c.name }}</option>
                     {% endfor %}
@@ -64,11 +70,11 @@
       </table>
     </div>
   {% else %}
-    <p>No cookies were found during this scan.</p>
+    <p>{{ 'No cookies were found during this scan.'|t('pragmatic-cookies') }}</p>
   {% endif %}
 
   <div class="toolbar" style="margin-top: 24px;">
-    <a href="{{ url('pragmatic-cookies/scanner') }}" class="btn">Back to Scanner</a>
+    <a href="{{ url('pragmatic-cookies/scanner') }}" class="btn">{{ 'Back to Scanner'|t('pragmatic-cookies') }}</a>
   </div>
 
   {% js %}
@@ -80,9 +86,9 @@
         Craft.sendActionRequest('POST', 'pragmatic-cookies/scan/link-cookie', {
           data: { resultId: resultId, cookieId: cookieId }
         }).then(function() {
-          Craft.cp.displayNotice('Cookie linked.');
+          Craft.cp.displayNotice({{ 'Cookie linked.'|t('pragmatic-cookies')|json_encode|raw }});
         }).catch(function() {
-          Craft.cp.displayError('Could not link cookie.');
+          Craft.cp.displayError({{ 'Could not link cookie.'|t('pragmatic-cookies')|json_encode|raw }});
         });
       });
     });

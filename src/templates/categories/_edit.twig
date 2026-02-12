@@ -3,6 +3,11 @@
 
 {% set selectedTab = 'categories' %}
 
+{% set crumbs = [
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
+  { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories') },
+] %}
+
 {% block content %}
   <form method="post" accept-charset="UTF-8">
     {{ csrfInput() }}
@@ -14,7 +19,7 @@
     {% endif %}
 
     {{ forms.textField({
-      label: 'Name',
+      label: 'Name'|t('pragmatic-cookies'),
       id: 'name',
       name: 'name',
       value: category.name,
@@ -24,34 +29,34 @@
     }) }}
 
     {{ forms.textField({
-      label: 'Handle',
+      label: 'Handle'|t('pragmatic-cookies'),
       id: 'handle',
       name: 'handle',
       value: category.handle,
       required: true,
-      instructions: 'Used in code references (e.g. "analytics", "marketing").',
+      instructions: 'Used in code references (e.g. "analytics", "marketing").'|t('pragmatic-cookies'),
       errors: category.getErrors('handle'),
     }) }}
 
     {{ forms.textareaField({
-      label: 'Description',
+      label: 'Description'|t('pragmatic-cookies'),
       id: 'description',
       name: 'description',
       value: category.description,
       rows: 3,
-      instructions: 'Shown to visitors in the consent popup.',
+      instructions: 'Shown to visitors in the consent popup.'|t('pragmatic-cookies'),
     }) }}
 
     {{ forms.lightswitchField({
-      label: 'Required',
+      label: 'Required'|t('pragmatic-cookies'),
       id: 'isRequired',
       name: 'isRequired',
       on: category.isRequired,
-      instructions: 'Required categories cannot be disabled by visitors.',
+      instructions: 'Required categories cannot be disabled by visitors.'|t('pragmatic-cookies'),
     }) }}
 
     <div class="btngroup">
-      <button type="submit" class="btn submit">Save</button>
+      <button type="submit" class="btn submit">{{ 'Save'|t('pragmatic-cookies') }}</button>
     </div>
   </form>
 

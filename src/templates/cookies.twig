@@ -1,11 +1,16 @@
 {% extends 'pragmatic-cookies/_layout' %}
 
-{% set title = 'Cookies' %}
+{% set title = 'Cookies'|t('pragmatic-cookies') %}
 {% set selectedTab = 'cookies' %}
+
+{% set crumbs = [
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies/cookies') },
+] %}
 
 {% block content %}
   <div class="toolbar">
-    <button class="btn submit add icon" id="new-cookie-btn">New Cookie</button>
+    <button class="btn submit add icon" id="new-cookie-btn">{{ 'New Cookie'|t('pragmatic-cookies') }}</button>
   </div>
 
   {% if cookies|length %}
@@ -13,11 +18,11 @@
       <table class="data fullwidth">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Provider</th>
-            <th>Category</th>
-            <th>Duration</th>
-            <th>Regex</th>
+            <th>{{ 'Name'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Provider'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Category'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Duration'|t('pragmatic-cookies') }}</th>
+            <th>{{ 'Regex'|t('pragmatic-cookies') }}</th>
             <th></th>
           </tr>
         </thead>
@@ -42,9 +47,9 @@
                 {{ cat ? cat.name : '—' }}
               </td>
               <td>{{ cookie.duration ?? '—' }}</td>
-              <td>{{ cookie.isRegex ? 'Yes' : 'No' }}</td>
+              <td>{{ cookie.isRegex ? 'Yes'|t('pragmatic-cookies') : 'No'|t('pragmatic-cookies') }}</td>
               <td class="thin">
-                <a class="delete icon" title="Delete" role="button" data-cookie-id="{{ cookie.id }}"></a>
+                <a class="delete icon" title="{{ 'Delete'|t('pragmatic-cookies') }}" role="button" data-cookie-id="{{ cookie.id }}"></a>
               </td>
             </tr>
           {% endfor %}
@@ -52,7 +57,7 @@
       </table>
     </div>
   {% else %}
-    <p>No cookies defined yet. Add cookies manually or use the Scanner to discover them.</p>
+    <p>{{ 'No cookies defined yet. Add cookies manually or use the Scanner to discover them.'|t('pragmatic-cookies') }}</p>
   {% endif %}
 
   {# Cookie edit/create modal #}
@@ -66,20 +71,20 @@
 
       <div class="body">
         <div class="field">
-          <div class="heading"><label for="modal-name">Cookie Name</label></div>
+          <div class="heading"><label for="modal-name">{{ 'Cookie Name'|t('pragmatic-cookies') }}</label></div>
           <div class="input"><input type="text" id="modal-name" name="name" class="text fullwidth" required></div>
         </div>
 
         <div class="field">
-          <div class="heading"><label for="modal-provider">Provider</label></div>
+          <div class="heading"><label for="modal-provider">{{ 'Provider'|t('pragmatic-cookies') }}</label></div>
           <div class="input"><input type="text" id="modal-provider" name="provider" class="text fullwidth"></div>
         </div>
 
         <div class="field">
-          <div class="heading"><label for="modal-category">Category</label></div>
+          <div class="heading"><label for="modal-category">{{ 'Category'|t('pragmatic-cookies') }}</label></div>
           <div class="input">
             <select id="modal-category" name="categoryId" class="fullwidth">
-              <option value="">— Uncategorized —</option>
+              <option value="">{{ '— Uncategorized —'|t('pragmatic-cookies') }}</option>
               {% for cat in categories %}
                 <option value="{{ cat.id }}">{{ cat.name }}</option>
               {% endfor %}
@@ -88,27 +93,27 @@
         </div>
 
         <div class="field">
-          <div class="heading"><label for="modal-description">Description</label></div>
+          <div class="heading"><label for="modal-description">{{ 'Description'|t('pragmatic-cookies') }}</label></div>
           <div class="input"><textarea id="modal-description" name="description" class="text fullwidth" rows="2"></textarea></div>
         </div>
 
         <div class="field">
-          <div class="heading"><label for="modal-duration">Duration</label></div>
-          <div class="input"><input type="text" id="modal-duration" name="duration" class="text fullwidth" placeholder="e.g. 1 year, Session"></div>
+          <div class="heading"><label for="modal-duration">{{ 'Duration'|t('pragmatic-cookies') }}</label></div>
+          <div class="input"><input type="text" id="modal-duration" name="duration" class="text fullwidth" placeholder="{{ 'e.g. 1 year, Session'|t('pragmatic-cookies') }}"></div>
         </div>
 
         <div class="field">
-          <div class="heading"><label>Is Regex Pattern</label></div>
+          <div class="heading"><label>{{ 'Is Regex Pattern'|t('pragmatic-cookies') }}</label></div>
           <div class="input">
-            <label><input type="checkbox" id="modal-is-regex" name="isRegex" value="1"> Treat name as regex pattern</label>
+            <label><input type="checkbox" id="modal-is-regex" name="isRegex" value="1"> {{ 'Treat name as regex pattern'|t('pragmatic-cookies') }}</label>
           </div>
         </div>
       </div>
 
       <div class="footer">
         <div class="btngroup">
-          <button type="submit" class="btn submit">Save</button>
-          <button type="button" class="btn cancel-modal">Cancel</button>
+          <button type="submit" class="btn submit">{{ 'Save'|t('pragmatic-cookies') }}</button>
+          <button type="button" class="btn cancel-modal">{{ 'Cancel'|t('pragmatic-cookies') }}</button>
         </div>
       </div>
     </form>
@@ -170,7 +175,7 @@
       document.querySelectorAll('.delete.icon[data-cookie-id]').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
           e.preventDefault();
-          if (!confirm('Are you sure you want to delete this cookie?')) return;
+          if (!confirm({{ 'Are you sure you want to delete this cookie?'|t('pragmatic-cookies')|json_encode|raw }})) return;
           var id = this.dataset.cookieId;
           Craft.sendActionRequest('POST', 'pragmatic-cookies/default/delete-cookie', {
             data: { id: id }

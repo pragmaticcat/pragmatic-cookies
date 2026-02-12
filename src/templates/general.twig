@@ -1,8 +1,13 @@
 {% extends 'pragmatic-cookies/_layout' %}
 {% import "_includes/forms" as forms %}
 
-{% set title = 'General' %}
+{% set title = 'General'|t('pragmatic-cookies') %}
 {% set selectedTab = 'general' %}
+
+{% set crumbs = [
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
+  { label: 'General'|t('pragmatic-cookies'), url: url('pragmatic-cookies/general') },
+] %}
 
 {% block content %}
   <form method="post" accept-charset="UTF-8">
@@ -11,25 +16,25 @@
     {{ redirectInput('pragmatic-cookies/general') }}
 
     {{ forms.textField({
-      label: 'Popup Title',
+      label: 'Popup Title'|t('pragmatic-cookies'),
       id: 'popupTitle',
       name: 'popupTitle',
       value: settings.popupTitle,
       required: true,
-      instructions: 'The title displayed at the top of the cookie consent popup.'
+      instructions: 'The title displayed at the top of the cookie consent popup.'|t('pragmatic-cookies')
     }) }}
 
     {{ forms.textareaField({
-      label: 'Popup Description',
+      label: 'Popup Description'|t('pragmatic-cookies'),
       id: 'popupDescription',
       name: 'popupDescription',
       value: settings.popupDescription,
       rows: 3,
-      instructions: 'The description text shown in the cookie consent popup.'
+      instructions: 'The description text shown in the cookie consent popup.'|t('pragmatic-cookies')
     }) }}
 
     {{ forms.textField({
-      label: 'Accept All Button Label',
+      label: 'Accept All Button Label'|t('pragmatic-cookies'),
       id: 'acceptAllLabel',
       name: 'acceptAllLabel',
       value: settings.acceptAllLabel,
@@ -37,7 +42,7 @@
     }) }}
 
     {{ forms.textField({
-      label: 'Reject All Button Label',
+      label: 'Reject All Button Label'|t('pragmatic-cookies'),
       id: 'rejectAllLabel',
       name: 'rejectAllLabel',
       value: settings.rejectAllLabel,
@@ -45,7 +50,7 @@
     }) }}
 
     {{ forms.textField({
-      label: 'Save Preferences Button Label',
+      label: 'Save Preferences Button Label'|t('pragmatic-cookies'),
       id: 'savePreferencesLabel',
       name: 'savePreferencesLabel',
       value: settings.savePreferencesLabel,
@@ -53,15 +58,15 @@
     }) }}
 
     {{ forms.textField({
-      label: 'Cookie Policy URL',
+      label: 'Cookie Policy URL'|t('pragmatic-cookies'),
       id: 'cookiePolicyUrl',
       name: 'cookiePolicyUrl',
       value: settings.cookiePolicyUrl,
-      instructions: 'Link to your cookie/privacy policy page. Leave empty to hide the link.'
+      instructions: 'Link to your cookie/privacy policy page. Leave empty to hide the link.'|t('pragmatic-cookies')
     }) }}
 
     <div class="btngroup">
-      <button type="submit" class="btn submit">Save</button>
+      <button type="submit" class="btn submit">{{ 'Save'|t('pragmatic-cookies') }}</button>
     </div>
   </form>
 {% endblock %}
