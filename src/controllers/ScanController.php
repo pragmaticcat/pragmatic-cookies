@@ -36,7 +36,7 @@ class ScanController extends Controller
 
         Craft::$app->getSession()->setNotice('Cookie scan started. Results will appear when complete.');
 
-        return $this->redirect('pragmatic-cookies/scanner');
+        return $this->redirectToPostedUrl(null, 'pragmatic-cookies/scanner');
     }
 
     public function actionResults(int $scanId): Response

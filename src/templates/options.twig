@@ -3,17 +3,19 @@
 
 {% set title = 'Appearance'|t('pragmatic-cookies') %}
 {% set selectedTab = 'options' %}
+{% set _siteHandle = craft.app.request.getQueryParam('site') %}
+{% set _siteParam = _siteHandle ? { site: _siteHandle } : {} %}
 
 {% set crumbs = [
-  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
-  { label: 'Appearance'|t('pragmatic-cookies'), url: url('pragmatic-cookies/options') },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies', _siteParam) },
+  { label: 'Appearance'|t('pragmatic-cookies'), url: url('pragmatic-cookies/options', _siteParam) },
 ] %}
 
 {% block content %}
   <form method="post" accept-charset="UTF-8">
     {{ csrfInput() }}
     {{ actionInput('pragmatic-cookies/default/save-options') }}
-    {{ redirectInput('pragmatic-cookies/options') }}
+    {{ redirectInput('pragmatic-cookies/options', _siteParam) }}
 
     <h2>{{ 'Layout'|t('pragmatic-cookies') }}</h2>
 

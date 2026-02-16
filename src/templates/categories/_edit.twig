@@ -2,17 +2,19 @@
 {% import "_includes/forms" as forms %}
 
 {% set selectedTab = 'categories' %}
+{% set _siteHandle = craft.app.request.getQueryParam('site') %}
+{% set _siteParam = _siteHandle ? { site: _siteHandle } : {} %}
 
 {% set crumbs = [
-  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
-  { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories') },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies', _siteParam) },
+  { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories', _siteParam) },
 ] %}
 
 {% block content %}
   <form method="post" accept-charset="UTF-8">
     {{ csrfInput() }}
     {{ actionInput('pragmatic-cookies/default/save-category') }}
-    {{ redirectInput('pragmatic-cookies/categories') }}
+    {{ redirectInput('pragmatic-cookies/categories', _siteParam) }}
 
     {% if category.id %}
       {{ hiddenInput('categoryId', category.id) }}

@@ -2,15 +2,17 @@
 
 {% set title = 'Categories'|t('pragmatic-cookies') %}
 {% set selectedTab = 'categories' %}
+{% set _siteHandle = craft.app.request.getQueryParam('site') %}
+{% set _siteParam = _siteHandle ? { site: _siteHandle } : {} %}
 
 {% set crumbs = [
-  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
-  { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories') },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies', _siteParam) },
+  { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories', _siteParam) },
 ] %}
 
 {% block content %}
   <div class="toolbar">
-    <a href="{{ url('pragmatic-cookies/categories/new') }}" class="btn submit add icon">{{ 'New Category'|t('pragmatic-cookies') }}</a>
+    <a href="{{ url('pragmatic-cookies/categories/new', _siteParam) }}" class="btn submit add icon">{{ 'New Category'|t('pragmatic-cookies') }}</a>
   </div>
 
   {% if categories|length %}
@@ -28,7 +30,7 @@
           {% for category in categories %}
             <tr data-id="{{ category.id }}">
               <td>
-                <a href="{{ url('pragmatic-cookies/categories/' ~ category.id) }}">
+                <a href="{{ url('pragmatic-cookies/categories/' ~ category.id, _siteParam) }}">
                   {{ category.name }}
                 </a>
               </td>

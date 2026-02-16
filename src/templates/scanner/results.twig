@@ -2,11 +2,13 @@
 
 {% set title = 'Scan Results'|t('pragmatic-cookies') %}
 {% set selectedTab = 'scanner' %}
+{% set _siteHandle = craft.app.request.getQueryParam('site') %}
+{% set _siteParam = _siteHandle ? { site: _siteHandle } : {} %}
 
 {% set crumbs = [
-  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
-  { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner') },
-  { label: 'Scan Results'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner/results/' ~ scan.id) },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies', _siteParam) },
+  { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner', _siteParam) },
+  { label: 'Scan Results'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner/results/' ~ scan.id, _siteParam) },
 ] %}
 
 {% block content %}
@@ -74,7 +76,7 @@
   {% endif %}
 
   <div class="toolbar" style="margin-top: 24px;">
-    <a href="{{ url('pragmatic-cookies/scanner') }}" class="btn">{{ 'Back to Scanner'|t('pragmatic-cookies') }}</a>
+    <a href="{{ url('pragmatic-cookies/scanner', _siteParam) }}" class="btn">{{ 'Back to Scanner'|t('pragmatic-cookies') }}</a>
   </div>
 
   {% js %}

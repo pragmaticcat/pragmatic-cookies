@@ -2,10 +2,12 @@
 
 {% set title = 'Cookies'|t('pragmatic-cookies') %}
 {% set selectedTab = 'cookies' %}
+{% set _siteHandle = craft.app.request.getQueryParam('site') %}
+{% set _siteParam = _siteHandle ? { site: _siteHandle } : {} %}
 
 {% set crumbs = [
-  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
-  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies/cookies') },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies', _siteParam) },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies/cookies', _siteParam) },
 ] %}
 
 {% block content %}
@@ -65,7 +67,7 @@
     <form method="post" accept-charset="UTF-8">
       {{ csrfInput() }}
       {{ actionInput('pragmatic-cookies/default/save-cookie') }}
-      {{ redirectInput('pragmatic-cookies/cookies') }}
+      {{ redirectInput('pragmatic-cookies/cookies', _siteParam) }}
 
       <input type="hidden" name="cookieId" id="modal-cookie-id" value="">
 

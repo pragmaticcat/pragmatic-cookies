@@ -3,13 +3,43 @@
 {% set title = title ?? 'Cookies'|t('pragmatic-cookies') %}
 {% set selectedSubnavItem = 'cookies' %}
 {% set selectedTab = craft.app.request.getSegment(2) ?? 'general' %}
+{% set _requestedSiteHandle = craft.app.request.getQueryParam('site') %}
+{% set _tabParams = _requestedSiteHandle ? { site: _requestedSiteHandle } : {} %}
+{% set _siteParam = _requestedSiteHandle ? { site: _requestedSiteHandle } : {} %}
 
 {% set tabs = {
-  'general': { label: 'General'|t('pragmatic-cookies'), url: url('pragmatic-cookies/general') },
-  'categories': { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories') },
-  'cookies': { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies/cookies') },
-  'scanner': { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner') },
-  'options': { label: 'Appearance'|t('pragmatic-cookies'), url: url('pragmatic-cookies/options') }
+  'general': { label: 'General'|t('pragmatic-cookies'), url: url('pragmatic-cookies/general', _tabParams) },
+  'categories': { label: 'Categories'|t('pragmatic-cookies'), url: url('pragmatic-cookies/categories', _tabParams) },
+  'cookies': { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies/cookies', _tabParams) },
+  'scanner': { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner', _tabParams) },
+  'options': { label: 'Appearance'|t('pragmatic-cookies'), url: url('pragmatic-cookies/options', _tabParams) }
 } %}
+
+{% set _allEditableSites = craft.app.sites.getEditableSites() %}
+{% if _allEditableSites|length > 1 %}
+  {% set _selectedSite = craft.app.sites.getPrimarySite() %}
+  {% if _requestedSiteHandle %}
+    {% set _siteByHandle = craft.app.sites.getSiteByHandle(_requestedSiteHandle) %}
+    {% if _siteByHandle %}
+      {% set _selectedSite = _siteByHandle %}
+    {% endif %}
+  {% endif %}
+  {% if selectedSite is defined and selectedSite %}
+    {% set _selectedSite = selectedSite %}
+  {% endif %}
+  {% set _siteMenuItems = siteMenuItems(_allEditableSites, _selectedSite) %}
+  {% if _siteMenuItems|length %}
+    {% set crumbs = (crumbs ?? [])|unshift({
+      id: 'site-crumb',
+      icon: 'world',
+      iconAltText: 'Site'|t('app'),
+      label: _selectedSite.name|t('site'),
+      menu: {
+        items: _siteMenuItems,
+        label: 'Select site'|t('app')
+      }
+    }) %}
+  {% endif %}
+{% endif %}
 
 {% block content %}{% endblock %}

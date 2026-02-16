@@ -2,10 +2,12 @@
 
 {% set title = 'Scanner'|t('pragmatic-cookies') %}
 {% set selectedTab = 'scanner' %}
+{% set _siteHandle = craft.app.request.getQueryParam('site') %}
+{% set _siteParam = _siteHandle ? { site: _siteHandle } : {} %}
 
 {% set crumbs = [
-  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies') },
-  { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner') },
+  { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies', _siteParam) },
+  { label: 'Scanner'|t('pragmatic-cookies'), url: url('pragmatic-cookies/scanner', _siteParam) },
 ] %}
 
 {% do view.registerAssetBundle('pragmatic\\cookies\\assets\\CpAsset') %}
@@ -15,6 +17,7 @@
     <form method="post">
       {{ csrfInput() }}
       {{ actionInput('pragmatic-cookies/scan/start') }}
+      {{ redirectInput('pragmatic-cookies/scanner', _siteParam) }}
       <button type="submit" class="btn submit">{{ 'Start Scan'|t('pragmatic-cookies') }}</button>
     </form>
   </div>
@@ -61,7 +64,7 @@
               </td>
               <td>
                 {% if scan.status == 'completed' %}
-                  <a href="{{ url('pragmatic-cookies/scanner/results/' ~ scan.id) }}" class="btn small">{{ 'View Results'|t('pragmatic-cookies') }}</a>
+                  <a href="{{ url('pragmatic-cookies/scanner/results/' ~ scan.id, _siteParam) }}" class="btn small">{{ 'View Results'|t('pragmatic-cookies') }}</a>
                 {% endif %}
               </td>
             </tr>
