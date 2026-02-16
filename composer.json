@@ -22,7 +22,7 @@
     "email": "oriolnoya@pragmatic.cat"
   },
   "extra": {
-    "handle": "pragmatic-cookies-craftcms-plugin",
+    "handle": "pragmatic-cookies",
     "class": "pragmatic\\cookies\\PragmaticCookies",
     "name": "Pragmatic Cookies",
     "developer": "Pragmatic",
