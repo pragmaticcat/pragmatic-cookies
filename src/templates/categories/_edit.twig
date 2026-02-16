@@ -4,6 +4,8 @@
 {% set selectedTab = 'categories' %}
 {% set _siteHandle = craft.app.request.getQueryParam('site') %}
 {% set _siteParam = _siteHandle ? { site: _siteHandle } : {} %}
+{% set _localizableTitle = 'This field is translated for each site.'|t('app') %}
+{% set _localizableIcon = '<span class="localizable icon" data-icon="world" title="' ~ _localizableTitle|e('html_attr') ~ '" aria-label="' ~ _localizableTitle|e('html_attr') ~ '"></span>' %}
 
 {% set crumbs = [
   { label: 'Cookies'|t('pragmatic-cookies'), url: url('pragmatic-cookies', _siteParam) },
@@ -15,13 +17,14 @@
     {{ csrfInput() }}
     {{ actionInput('pragmatic-cookies/default/save-category') }}
     {{ redirectInput('pragmatic-cookies/categories', _siteParam) }}
+    {{ hiddenInput('site', selectedSiteId ?? craft.app.sites.currentSite.id) }}
 
     {% if category.id %}
       {{ hiddenInput('categoryId', category.id) }}
     {% endif %}
 
     {{ forms.textField({
-      label: 'Name'|t('pragmatic-cookies'),
+      label: ('Name'|t('pragmatic-cookies') ~ ' ' ~ _localizableIcon)|raw,
       id: 'name',
       name: 'name',
       value: category.name,
@@ -41,7 +44,7 @@
     }) }}
 
     {{ forms.textareaField({
-      label: 'Description'|t('pragmatic-cookies'),
+      label: ('Description'|t('pragmatic-cookies') ~ ' ' ~ _localizableIcon)|raw,
       id: 'description',
       name: 'description',
       value: category.description,

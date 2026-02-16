@@ -2,27 +2,74 @@
 
 namespace pragmatic\cookies\services;
 
+use Craft;
 use craft\db\Query;
+use craft\helpers\Cp;
+use craft\helpers\Db;
+use craft\helpers\StringHelper;
 use pragmatic\cookies\models\CookieCategoryModel;
 use pragmatic\cookies\records\CookieCategoryRecord;
 use yii\base\Component;
+use yii\db\Expression;
+use yii\db\Schema;
 
 class CategoriesService extends Component
 {
-    public function getAllCategories(): array
+    private const SITE_VALUES_TABLE = '{{%pragmatic_cookies_category_site_values}}';
+    private static bool $siteValuesTableReady = false;
+
+    public function getAllCategories(?int $siteId = null): array
     {
-        $records = CookieCategoryRecord::find()
+        $this->ensureSiteValuesTable();
+        $siteId = $this->resolveSiteId($siteId);
+
+        $rows = (new Query())
+            ->from(['c' => CookieCategoryRecord::tableName()])
+            ->leftJoin(
+                ['sv' => self::SITE_VALUES_TABLE],
+                '[[sv.categoryId]] = [[c.id]] AND [[sv.siteId]] = :siteId',
+                [':siteId' => $siteId]
+            )
+            ->select([
+                'id' => '[[c.id]]',
+                'name' => new Expression('COALESCE([[sv.name]], [[c.name]])'),
+                'handle' => '[[c.handle]]',
+                'description' => new Expression('COALESCE([[sv.description]], [[c.description]])'),
+                'isRequired' => '[[c.isRequired]]',
+                'sortOrder' => '[[c.sortOrder]]',
+                'uid' => '[[c.uid]]',
+            ])
             ->orderBy(['sortOrder' => SORT_ASC])
             ->all();
 
-        return array_map(fn($record) => $this->_createModelFromRecord($record), $records);
+        return array_map(fn(array $row) => $this->_createModelFromRow($row), $rows);
     }
 
-    public function getCategoryById(int $id): ?CookieCategoryModel
+    public function getCategoryById(int $id, ?int $siteId = null): ?CookieCategoryModel
     {
-        $record = CookieCategoryRecord::findOne($id);
+        $this->ensureSiteValuesTable();
+        $siteId = $this->resolveSiteId($siteId);
 
-        return $record ? $this->_createModelFromRecord($record) : null;
+        $row = (new Query())
+            ->from(['c' => CookieCategoryRecord::tableName()])
+            ->leftJoin(
+                ['sv' => self::SITE_VALUES_TABLE],
+                '[[sv.categoryId]] = [[c.id]] AND [[sv.siteId]] = :siteId',
+                [':siteId' => $siteId]
+            )
+            ->select([
+                'id' => '[[c.id]]',
+                'name' => new Expression('COALESCE([[sv.name]], [[c.name]])'),
+                'handle' => '[[c.handle]]',
+                'description' => new Expression('COALESCE([[sv.description]], [[c.description]])'),
+                'isRequired' => '[[c.isRequired]]',
+                'sortOrder' => '[[c.sortOrder]]',
+                'uid' => '[[c.uid]]',
+            ])
+            ->where(['c.id' => $id])
+            ->one();
+
+        return $row ? $this->_createModelFromRow($row) : null;
     }
 
     public function getCategoryByHandle(string $handle): ?CookieCategoryModel
@@ -32,8 +79,11 @@ class CategoriesService extends Component
         return $record ? $this->_createModelFromRecord($record) : null;
     }
 
-    public function saveCategory(CookieCategoryModel $model): bool
+    public function saveCategory(CookieCategoryModel $model, ?int $siteId = null): bool
     {
+        $this->ensureSiteValuesTable();
+        $siteId = $this->resolveSiteId($siteId);
+
         if (!$model->validate()) {
             return false;
         }
@@ -53,6 +103,7 @@ class CategoriesService extends Component
             $model->sortOrder = ($maxSort ?? 0) + 1;
         }
 
+        // Base values act as fallback for sites without localized values.
         $record->name = $model->name;
         $record->handle = $model->handle;
         $record->description = $model->description;
@@ -65,6 +116,21 @@ class CategoriesService extends Component
         }
 
         $model->id = $record->id;
+
+        $now = Db::prepareDateForDb(new \DateTime());
+        Craft::$app->getDb()->createCommand()->upsert(self::SITE_VALUES_TABLE, [
+            'categoryId' => $record->id,
+            'siteId' => $siteId,
+            'name' => $model->name,
+            'description' => $model->description,
+            'dateCreated' => $now,
+            'dateUpdated' => $now,
+            'uid' => StringHelper::UUID(),
+        ], [
+            'name' => $model->name,
+            'description' => $model->description,
+            'dateUpdated' => $now,
+        ])->execute();
 
         return true;
     }
@@ -93,17 +159,112 @@ class CategoriesService extends Component
         return true;
     }
 
-    private function _createModelFromRecord(CookieCategoryRecord $record): CookieCategoryModel
+    private function _createModelFromRow(array $row): CookieCategoryModel
     {
         $model = new CookieCategoryModel();
-        $model->id = $record->id;
-        $model->name = $record->name;
-        $model->handle = $record->handle;
-        $model->description = $record->description;
-        $model->isRequired = (bool)$record->isRequired;
-        $model->sortOrder = (int)$record->sortOrder;
-        $model->uid = $record->uid;
+        $model->id = (int)$row['id'];
+        $model->name = (string)$row['name'];
+        $model->handle = (string)$row['handle'];
+        $model->description = $row['description'] !== null ? (string)$row['description'] : null;
+        $model->isRequired = (bool)$row['isRequired'];
+        $model->sortOrder = (int)$row['sortOrder'];
+        $model->uid = (string)$row['uid'];
 
         return $model;
+    }
+
+    private function _createModelFromRecord(CookieCategoryRecord $record): CookieCategoryModel
+    {
+        return $this->_createModelFromRow([
+            'id' => $record->id,
+            'name' => $record->name,
+            'handle' => $record->handle,
+            'description' => $record->description,
+            'isRequired' => $record->isRequired,
+            'sortOrder' => $record->sortOrder,
+            'uid' => $record->uid,
+        ]);
+    }
+
+    private function resolveSiteId(?int $siteId): int
+    {
+        if ($siteId) {
+            return $siteId;
+        }
+
+        $requestedSite = Cp::requestedSite();
+        if ($requestedSite) {
+            return (int)$requestedSite->id;
+        }
+
+        return (int)Craft::$app->getSites()->getCurrentSite()->id;
+    }
+
+    private function ensureSiteValuesTable(): void
+    {
+        if (self::$siteValuesTableReady) {
+            return;
+        }
+        self::$siteValuesTableReady = true;
+
+        $db = Craft::$app->getDb();
+        if (!$db->tableExists(self::SITE_VALUES_TABLE)) {
+            $db->createCommand()->createTable(self::SITE_VALUES_TABLE, [
+                'id' => Schema::TYPE_PK,
+                'categoryId' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'siteId' => Schema::TYPE_INTEGER . ' NOT NULL',
+                'name' => Schema::TYPE_STRING . '(255) NOT NULL',
+                'description' => Schema::TYPE_TEXT,
+                'dateCreated' => Schema::TYPE_DATETIME . ' NOT NULL',
+                'dateUpdated' => Schema::TYPE_DATETIME . ' NOT NULL',
+                'uid' => 'char(36) NOT NULL',
+            ])->execute();
+        }
+
+        try {
+            $db->createCommand()->createIndex(
+                'pragmatic_cookies_category_site_values_category_site_unique',
+                self::SITE_VALUES_TABLE,
+                ['categoryId', 'siteId'],
+                true
+            )->execute();
+        } catch (\Throwable) {
+        }
+
+        try {
+            $db->createCommand()->createIndex(
+                'pragmatic_cookies_category_site_values_site_idx',
+                self::SITE_VALUES_TABLE,
+                ['siteId'],
+                false
+            )->execute();
+        } catch (\Throwable) {
+        }
+
+        try {
+            $db->createCommand()->addForeignKey(
+                'pragmatic_cookies_category_site_values_category_fk',
+                self::SITE_VALUES_TABLE,
+                ['categoryId'],
+                CookieCategoryRecord::tableName(),
+                ['id'],
+                'CASCADE',
+                'CASCADE'
+            )->execute();
+        } catch (\Throwable) {
+        }
+
+        try {
+            $db->createCommand()->addForeignKey(
+                'pragmatic_cookies_category_site_values_site_fk',
+                self::SITE_VALUES_TABLE,
+                ['siteId'],
+                '{{%sites}}',
+                ['id'],
+                'CASCADE',
+                'CASCADE'
+            )->execute();
+        } catch (\Throwable) {
+        }
     }
 }

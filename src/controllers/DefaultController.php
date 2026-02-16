@@ -105,17 +105,24 @@ class DefaultController extends Controller
 
     public function actionCategories(): Response
     {
-        $categories = PragmaticCookies::$plugin->categories->getAllCategories();
+        $selectedSite = Cp::requestedSite() ?? Craft::$app->getSites()->getPrimarySite();
+        $selectedSiteId = (int)$selectedSite->id;
+        $categories = PragmaticCookies::$plugin->categories->getAllCategories($selectedSiteId);
 
         return $this->renderTemplate('pragmatic-cookies/categories/index', [
             'categories' => $categories,
+            'selectedSite' => $selectedSite,
+            'selectedSiteId' => $selectedSiteId,
         ]);
     }
 
     public function actionEditCategory(?int $categoryId = null): Response
     {
+        $selectedSite = Cp::requestedSite() ?? Craft::$app->getSites()->getPrimarySite();
+        $selectedSiteId = (int)$selectedSite->id;
+
         if ($categoryId) {
-            $category = PragmaticCookies::$plugin->categories->getCategoryById($categoryId);
+            $category = PragmaticCookies::$plugin->categories->getCategoryById($categoryId, $selectedSiteId);
             if (!$category) {
                 throw new \yii\web\NotFoundHttpException('Category not found');
             }
@@ -128,6 +135,8 @@ class DefaultController extends Controller
         return $this->renderTemplate('pragmatic-cookies/categories/_edit', [
             'category' => $category,
             'title' => $title,
+            'selectedSite' => $selectedSite,
+            'selectedSiteId' => $selectedSiteId,
         ]);
     }
 
@@ -137,9 +146,13 @@ class DefaultController extends Controller
 
         $request = Craft::$app->getRequest();
         $id = $request->getBodyParam('categoryId');
+        $siteId = (int)$request->getBodyParam('site', 0);
+        if (!$siteId) {
+            $siteId = (int)(Cp::requestedSite()?->id ?? Craft::$app->getSites()->getPrimarySite()->id);
+        }
 
         if ($id) {
-            $model = PragmaticCookies::$plugin->categories->getCategoryById($id);
+            $model = PragmaticCookies::$plugin->categories->getCategoryById((int)$id, $siteId);
             if (!$model) {
                 throw new \yii\web\NotFoundHttpException('Category not found');
             }
@@ -152,7 +165,7 @@ class DefaultController extends Controller
         $model->description = $request->getBodyParam('description', '');
         $model->isRequired = (bool)$request->getBodyParam('isRequired', false);
 
-        if (!PragmaticCookies::$plugin->categories->saveCategory($model)) {
+        if (!PragmaticCookies::$plugin->categories->saveCategory($model, $siteId)) {
             Craft::$app->getSession()->setError('Could not save category.');
 
             Craft::$app->getUrlManager()->setRouteParams([

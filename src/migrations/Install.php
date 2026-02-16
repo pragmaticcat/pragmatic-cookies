@@ -21,6 +21,7 @@ class Install extends Migration
         $this->dropTableIfExists('{{%pragmatic_cookies_scan_results}}');
         $this->dropTableIfExists('{{%pragmatic_cookies_scans}}');
         $this->dropTableIfExists('{{%pragmatic_cookies_consent_logs}}');
+        $this->dropTableIfExists('{{%pragmatic_cookies_category_site_values}}');
         $this->dropTableIfExists('{{%pragmatic_cookies_site_settings}}');
         $this->dropTableIfExists('{{%pragmatic_cookies_cookies}}');
         $this->dropTableIfExists('{{%pragmatic_cookies_categories}}');
@@ -104,6 +105,17 @@ class Install extends Migration
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid(),
         ]);
+
+        $this->createTable('{{%pragmatic_cookies_category_site_values}}', [
+            'id' => $this->primaryKey(),
+            'categoryId' => $this->integer()->notNull(),
+            'siteId' => $this->integer()->notNull(),
+            'name' => $this->string()->notNull(),
+            'description' => $this->text(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid(),
+        ]);
     }
 
     private function createIndexes(): void
@@ -114,6 +126,8 @@ class Install extends Migration
         $this->createIndex(null, '{{%pragmatic_cookies_scan_results}}', 'cookieId');
         $this->createIndex(null, '{{%pragmatic_cookies_consent_logs}}', 'visitorId');
         $this->createIndex(null, '{{%pragmatic_cookies_site_settings}}', 'siteId', true);
+        $this->createIndex(null, '{{%pragmatic_cookies_category_site_values}}', ['categoryId', 'siteId'], true);
+        $this->createIndex(null, '{{%pragmatic_cookies_category_site_values}}', 'siteId');
     }
 
     private function addForeignKeys(): void
@@ -143,6 +157,26 @@ class Install extends Migration
             '{{%pragmatic_cookies_cookies}}',
             'id',
             'SET NULL',
+        );
+
+        $this->addForeignKey(
+            null,
+            '{{%pragmatic_cookies_category_site_values}}',
+            'categoryId',
+            '{{%pragmatic_cookies_categories}}',
+            'id',
+            'CASCADE',
+            'CASCADE',
+        );
+
+        $this->addForeignKey(
+            null,
+            '{{%pragmatic_cookies_category_site_values}}',
+            'siteId',
+            '{{%sites}}',
+            'id',
+            'CASCADE',
+            'CASCADE',
         );
     }
 
