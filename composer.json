@@ -1,11 +1,12 @@
 {
   "name": "pragmatic/cookies-craftcms-plugin",
-  "description": "Pragmatic Cookies plugin for Craft CMS",
+  "description": "Pragmatic Cookies extension for Pragmatic Web Toolkit",
   "type": "craft-plugin",
   "license": "MIT",
   "require": {
     "php": ">=8.2",
-    "craftcms/cms": "^5.0"
+    "craftcms/cms": "^5.0",
+    "pragmatic/web-toolkit-craftcms-plugin": "*"
   },
   "autoload": {
     "psr-4": {
@@ -29,6 +30,6 @@
     "developerUrl": "https://www.pragmatic.cat",
     "documentationUrl": "https://github.com/pragmaticcat/cookies-craftcms-plugin/blob/main/README.md",
     "hasSettings": false,
-    "hasCpSection": true
+    "hasCpSection": false
   }
 }
